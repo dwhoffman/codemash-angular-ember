@@ -1,0 +1,13 @@
+li {
+	list-style-type: disc;
+	list-style-position: inside;
+	margin-bottom: 10px !important;
+}
+
+li.subitem {
+	font-size: 0.8em;
+}
+
+li i {
+	color: #bbb;
+}
