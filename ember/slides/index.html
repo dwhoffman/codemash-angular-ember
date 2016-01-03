@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Intro to Ember.js</title>
+
+		<meta name="description" content="An introduction to Ember.js fundamentals">
+		<meta name="author" content="Dustin Hoffman">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/ember.css" id="theme">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<img src="images/ember-logo.jpg" width="250" height="250" alt="Ember" />
+					<h1>Ember Fundamentals</h1>
+					<h3>An Introduction to Ember.js</h3>
+				</section>
+
+				<section>
+					<h2>What is it?</h2>
+					<ul>
+						<li>
+							<q cite="http://www.emberjs.com">&quot;
+								A framework for creating <strong>ambitious</strong> web applications&quot; - 
+								<a href="http://www.emberjs.com">Emberjs.com</a>
+							</q>
+						</li>
+						<li>
+							Originally created by Yehuda Katz, 
+							now an open source project with a core team of 14 members
+						</li>
+						<li>
+							Under <b>very</b> active development.
+							<ul>
+								<li class="subitem">Version 2.0 released August 13, 2015</li>
+							</ul>
+						</li>
+						<li>
+							Focal Points:
+							<ul>
+								<li class="subitem">Handlebars Templates</li>
+								<li class="subitem">Convention over configuration</li>
+								<li class="subitem">Promises are treated as 1st-class citizens</li>
+								<li class="subitem">Integrated testing and deployment tools via Ember-CLI</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Basic Building Blocks</h2>
+					<p>Ember is an <strong>MVC</strong> framework.</p>
+					<ul>
+						<li>
+							<strong>Router</strong> 
+							<span class="fragment"> - <i>Maps the requested URL to a route</i></span>
+						</li>
+						<li>
+							<strong>Route</strong>
+							<span class="fragment"> - <i>Renders a template and loads a model</i></span>
+						</li>
+						<li>
+							<strong>Template</strong> 
+							<span class="fragment"> - <i>Handlebars template with two-way binding to model</i></span>
+						</li>
+						<li>
+							<strong>Model</strong> 
+							<span class="fragment"> - <i>Represents persistent data</i></span>
+						</li>
+						<li>
+							<strong>Component</strong> 
+							<span class="fragment"> - <i>App-specific HTML tag, easily-reusable "partial" view</i></span>
+						</li>
+						<li>
+							<strong>Controller</strong> 
+							<span class="fragment"> - <i>Go-between for model and template, contains actions</i></span>
+						</li>
+					</ul>
+					<aside class="notes">
+						<p>* ROUTER - a js module where you hook urls up to the route object that will handle the request</p>
+						<p>* ROUTE - a js module that loads the model using the model() function and renders the temaplte</p>
+						<p>* TEMPLATE - markup file that uses Handlebars syntax to display data that exists in the model or on the controller</p>
+						<p>* MODEL - our business objects. These classes represent the data we will ppersist to the data store</p>
+						<p>* COMPONENT - a template and corresponding module logic that serves as a reusable UI chunk. Very similar to partial views in ASP.NET MVC</p>
+						<p>* CONTROLLER - provides actions to the template and controls display-centric data. Also holds a reference to the model</p>
+						<strong>If this seems like a lot of pieces and parts, don't panic! Once you start writing the code the patterns become very simplistic.</strong>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Project Structure</h2>
+
+					<p>
+						Ember relies heavily on convention, and project structure is an important aspect of that
+					<p>
+
+					<ul>
+						<li class="fragment">Ember code is written in ES2015 syntax as modules</li>
+						<li class="fragment">Ember automatically resolves these modules as needed, so it has to know where to find it</li>
+						<li class="fragment">A newly generated Ember project will have these directories:
+							<ul>
+								<li class="subitem">Components</li>
+								<li class="subitem">Controllers</li>
+								<li class="subitem">Helpers</li>
+								<li class="subitem">Models</li>
+								<li class="subitem">Routes</li>
+								<li class="subitem">Styles</li>
+								<li class="subitem">Templates</li>
+							</ul>
+						</li>
+						<li class="fragment">
+							For example, if you have a URL in your project that looks like "/posts/new",
+							you would have a folder in your routes directory named "posts" and a file within
+							that directory named "new.js"
+						</li>
+					</ul>
+
+					</p>
+					
+					<aside class="notes">
+						<p>Ember has to know where to find the files that make up your project</p>
+						<p>(FRAG 1) Written as ES6 modules</p>
+						<p>(FRAG 2) The ember resolver finds them based on where they're defined</p>
+						<p>(FRAG 3) Just read the files</p>
+						<p>(FRAG 4) Maybe give another example, such as nested templates...</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>The Flow of Data</h2>
+					<img style="background-color:#fff;" src="images/ember-data-flow.png"/>
+						
+					<aside class="notes">
+						<p>Everything starts with a route that's invoked via a URL.
+							The Route then loads the Model by executing its Model() function.
+							Then the model is set on the Controller, and the View gets rendered
+								with the data in model and the Controller.
+							The View then renders the Template using the Controller and Route data.</p>
+						<p>It may seem a little complicated, but once you get the hang of creating
+							Routes and Templates and wiring them up, it gets easy to duplicate the pattern
+							as needed.</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Routing</h2>
+
+					<p>A single router.js at the root of your project provides all of the URL routing in an Ember app:</p>
+
+					<img width="750px" height="400px" src="images/routing.png"/>
+
+					<aside class="notes">
+						<ul>
+							<li>Router.js holds allof the route definitions for an app</li>
+							<li>By extending Ember.Router, you can call the map() function to register your routes</li>
+							<li>Ember makes nested routes easy by allowing you to specify as many sub-routes as you want,
+								which all inherit from their parents</li>
+							<li>Placeholders in the URL are specified by prefixing that portion of the path with a colon</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Models</h2>
+
+					<p><strong>Ember has two distinct types of "models"</strong></p>
+					<ol>
+						<li>The first is a definition of the data used by the app (your persistent data)</li>
+					</ol>
+					<p>This is essentially a model <strong>definition</strong></p>
+					<img height="250px" width="700px" src="images/models1.png"/>
+				</section>
+
+				<section>
+					<h2>Models</h2>
+					
+					<p><strong>Ember has two distinct types of "models"</strong></p>
+					<ol>
+						<li>The second is the data returned from a Route, which is used by the Controller to render the Template</li>
+					</ol>
+					<img height="200px" width="700px" src="images/models2.png"/>
+				</section>
+
+				<section>
+					<h2>Routes</h2>
+					<ul>
+						<li>Routes respond to each of the route definitions in your app's <strong>router.js</strong></li>
+						<li>Responsible for providing the Controller with a <strong>model</strong></li>
+						<li>Ideal place for retrieving data from your persistence layer</li>
+						<li>Like all other objects in Ember, defined using <i>extend</i>:
+							<ul>
+								<li class="subitem"><strong>export default Ember.Route.extend()</strong></li>
+							</ul>
+						</li>
+						<li>Routes are mandatory</li>
+					</ul>
+
+					<aside class="notes">
+						<p>You’ll have one route for each of the calls to “this.route()” in your router.js
+						The route is responsible for providing a model object that will be set on the controller.
+						This is the ideal place to pull data from your persistence layer, as the data gets set on the controller without you having to do anything other than returning it in the model function.
+						Routes are MANDATORY, as Ember has to know what to inject into the controller when a registered route is invoked.</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Controllers</h2>
+
+					<ul>
+						<li>Live in the <i>controllers</i> folder</li>
+						<li>Provides an excellent place for values needed to support your View/Template</li>
+						<ul>
+							<li class="subitem">A count, total, sum, etc. for a collection in your model</li>
+							<li class="subitem">Flags that determine if certain portions of your template should be toggled (<strong>showDetails</strong>, <strong>hidden</strong>, etc.)
+ 						</ul>
+						<li>Templates recognize <strong>actions</strong> hash on controllers as handlebars expression functions</li>
+					</ul>
+
+					<aside class="notes">
+						<p>Controllers all live in the controllers folder.
+							Controllers get created the same way that Routes do, except that they extend Ember.Controller.
+							They can have as many properties as you want, and they will all be available to your handlebars templates as values that can be bound.
+							Controllers can have a special hash called “actions” that contain named functions.
+							These functions can be tied to handlebars expressions in your templates.
+							Using the action binding, you can specify the name of the function in the actions hash that should be invoked whenever a specific UI-based event occurs
+							i.e. {{action ‘saveUser’}}
+							Ember wires all of this up for you, you just have to provide the implementation details.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Templates</h2>
+					<p>
+						Templates are essentially the Handlebars files representing your UI, so they serve as the View portion of MVC in Ember. 
+					</p>
+					<img height="400px" width="500px" src="images/templates.png"/>
+
+					<aside class="notes">
+						<p>
+							Ember handles the view behind the scenes, so what we’re left to take care of is simply dropping a handlebars template into the templates folder. 
+							The file name should match the name of the route it’s used for.
+							Within the template, you can access any value that exists on:
+							The model set on the Controller by the route, 
+							Any values set directly on the Controller,
+							And any actions functions in the Controller’s actions hash.
+							If you’ve ever worked with a mustache-based templating system, you will be familiar with how these templates are created.
+							You surround handlebars syntax with double-curly braces. 
+							Ember has a number of built-in helpers to make data-binding easier, such as the “input” helper used in this snippet.
+							Ember manages keeping everything in sync between the model data and the UI automatically.
+							Using the snippet above, you can watch the fullName field change with every keystroke in either of the first or last name fields.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Adapters</h2>
+					<ul>
+						<li>Ember uses adapters to make data store management easier</li>
+						<li>RESTAdapter is the default (uses JSON API)</li>
+						<li>
+							Calling functions on <strong>this.store</strong> in your route will call your API 
+							using naming conventions to determine the route URL:
+							<ul>
+								<li class="subitem">this.store.findRecord('post', 1) becomes an AJAX GET request to /posts/1</li>
+							</ul>
+						</li>
+						<li>Adapters can be swapped out just by changing what's extended</li>
+						<li>Adapters exist for local storage, test fixture data, Solr, CouchDB, and many more</li>
+					</ul>
+
+					<aside class="notes">
+						<p>
+							Ember comes with adapters that try to help make your life easier when it comes to keeping your app in sync with your backend or client data storage mechanism.
+							The RESTAdapter is the default, unless you provide an alternative.
+							Adapters exist for almost everything you could consider a data store, which make it easy to use an existing adapter so you don’t have to write your own.
+							Because Ember is so modularized, none of your code had to change in order to swap out adapters.
+							The FixtureAdapter is an important one, as you can create a test build of your app that targets the test environment and uses the Fixture data for test execution instead of having to hit a real data store.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Ember CLI</h2>
+					<ul>
+						<li>Ember App Kit is no longer supported</li>
+						<li>Ember CLI is the new, simpler way of creating Ember apps</li>
+						<li>It makes your life just a little bit easier...
+							<ul>
+								<li class="subitem">Generates folder structure</li>
+								<li class="subitem">Has generators for all aspects of an Ember app (controllers, routes, etc.)</li>
+								<li class="subitem">Includes a server that hosts the app and monitors your code for changes</li>
+								<li class="subitem">Allows you to build your app for a specific environment</li>
+								<li class="subitem">Runs your tests</li>
+							</ul>
+						</li>
+					</ul>
+
+					<aside class="notes">
+						<p>
+							Previously you would download ember appkit to start an ember project.
+							That method is no longer supported, as the Ember CLI tool has surpassed it completely.
+							This CLI tool is extremely powerful, and can make all aspects of your project much simpler
+							In addition to the list above, it also:
+							Minifies and versions all of your code and style, making the output as small and as simple as possible.
+							Allows you to install addons
+							Automatically initializes the project’s root folder as a git repository and generates the initial git commit 
+							Runs tests with testem in CI mode to make continuous integration easier
+							Provides us the ability to utilize ES6 semantics.
+							Transcompiles the code for us.
+							This tool is AWESOME, and takes a lot of work out of the development/deployment process.
+						</p>
+					</aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				slideNumber: false,
+				history: true,
+				keyboard: true,
+				overview: true,
+				center: true,
+				touch: true,
+				loop: false,
+				rtl: false,
+				fragments: true,
+				embedded: false,
+				help: true,
+				showNotes: false,
+				autoSlide: 0,
+				autoSlideStoppable: true,
+				mouseWheel: false,
+				hideAddressBar: true,
+				previewLinks: true,
+				transition: 'convex',
+				transitionSpeed: 'default',
+				backgroundTransition: 'default',
+				viewDistance: 3,
+				parallaxBackgroundImage: '', //https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg
+				parallaxBackgroundSize: '',
+				parallaxBackgroundHorizontal: null,
+				parallaxBackgroundVertical: null,
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
