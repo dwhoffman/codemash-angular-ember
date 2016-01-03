@@ -1,0 +1,28 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.theme-dropdown .dropdown-menu {
+  position: static;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.theme-showcase > p > .btn {
+  margin: 5px 0;
+}
+
+.theme-showcase .navbar .container {
+  width: auto;
+}
+
+.screencap img {
+  border-style: outset;
+	border-width: 5px;
+	border-radius: 0.5em;
+	border-color: #999;
+	margin: auto 0;
+  margin-bottom: 10px;
+}
+

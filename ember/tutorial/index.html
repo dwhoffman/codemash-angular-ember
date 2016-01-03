@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Building an App with Ember</title>
+
+        <link rel="stylesheet" href="app.css">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="node_modules/prismjs/themes/prism-atom-dark.css">
+    </head>
+    
+    <body class="language-javascript">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" 
+                        data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">Building an App with Ember</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="#Intro">Intro</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+                        aria-haspopup="true" aria-expanded="false">Quick Links <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#Intro">Intro</a></li>
+                    <li><a href="#GettingReady">Getting Ready</a></li>
+                    <li><a href="#CreatingApp">Creating the App</a></li>
+                    <li><a href="#FirstModel">The First Model</a></li>
+                    <li><a href="#BootstrapIt">Bootstrap It</a></li>
+                    <li><a href="#ShowingList">Showing the List</a></li>
+                    <li><a href="#SettingUpAdapter">Setting Up the Adapter</a></li>
+                    <li><a href="#BackToList">Back to the List</a></li>
+                    <li><a href="#FirstHelper">Your First Helper</a></li>
+                    <li><a href="#Linking">Linking</a></li>
+                    <li><a href="#Deleting">Deleting a Note</a></li>
+                    <li><a href="#CreateNewNote">Creating a New Note</a></li>
+                    <li><a href="#SortAndFilter">Sorting and Filtering</a></li>
+                    <li><a href="#NextSteps">Next Steps</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+
+        <div class="container" role="main">
+            <div class="jumbotron">
+                <h1 id="Intro">
+                    Building an App with Ember
+                </h1>
+                <p>
+                    This tutorial will walk you through the steps necessary to build a small web-based application using <a href="http://www.emberjs.com/">Ember JS</a>. The
+                    latest version at the time of this writing was 2.1.0, and has been used to detail the following steps. Please note, Ember changes VERY frequently, so stick
+                    with the version used here to ensure maximum compatibility.
+                </p>
+            </div>
+            <div class="well">
+                <h3>The Notes App</h3>
+                <p>
+                    The site we’re building here is a simple note-taking site, where you can create and view notes you wish to save for later.
+                </p>
+            </div>
+            
+            <div class="page-header">
+                <h3 id="GettingReady">Getting Things Ready</h3>
+            </div>
+
+            <p>
+                The first step is to get all of the backend setup and running. The site uses a REST-based API to communicate new notes, and retrieve notes already created.
+                This backend service uses Restify for the API and a SQLite database for persistence.
+            </p>
+            <p>
+                Installing Ember-CLI and Dependencies
+            </p>
+            <ol>
+                <li>Install Node and NPM using <a href="http://www.nodejs.org">this</a> as a guide</li>
+                <li>
+                    Install Ember-CLI globally:
+                    <pre class="language-bash"><code>npm install –g ember-cli</code></pre>
+                </li>
+                <li>
+                    Install Bower globally for front-end dependencies:
+                    <pre class="language-bash"><code>npm install –g bower</code></pre>    
+                </li>
+                <li>
+                    Install PhantomJS for integration testing:
+                    <pre class="language-bash"><code>npm install –g phantomjs</code></pre>
+                </li>
+            </ol>
+            
+            <div class="page-header">
+                <h3 id="CreatingApp">Creating a New Ember App</h3>
+            </div>
+            <ol>
+                <li>
+                    <pre class="language-bash"><code>ember new notesApp</code></pre>
+                </li>
+                <li>
+                    <pre class="language-bash"><code>cd notesApp</code></pre>
+                </li>
+                <li>
+                    <pre class="language-bash"><code>ember serve</code></pre>
+                </li>
+                <li>
+                    Navigate to <a href="http://localhost:4200/">http://localhost:4200</a>.
+                </li>
+                <li>
+                    To see what the test output looks like:
+                    <a href="http://localhost:4200/tests">http://localhost:4200/tests</a>
+                </li>
+            </ol>
+            
+            <p>
+                <i>"Welcome to Ember"</i>? Where did that come from…
+            </p>
+            <p>
+                If you look at the project structure, nothing in index seems to tell us where that content came from, but if you examine the file
+                “notesApp/app/templates/application.hbs”, you can see the welcome message is a part of the application template, which was given automatically to render an index (root)
+                view.
+            </p>
+            <p>
+                Ember generator provides a ton of blueprints you can use to make file management easier for you. Just tell the cli that you need a controller named
+                “index”, and it’ll make sure it’s in the right place and importing/exporting the right things.
+            </p>
+            <p>
+                Ember is an MVC framework, so it works with models as representations of underlying data, controllers to handle actions taken on that data, and views to
+                allow the data to be displayed and modified. The models are made simpler to work with thanks to the Ember Data library, and views are realized through
+                simple HTML markup and Handlebars data binding.
+            </p>
+
+            <div class="page-header">
+                <h3 id="FirstModel">Creating the First Model</h3>
+            </div>
+            <p>
+                To generate the concept of an object with its dedicated route/model/template implementation, enter the following at the command line:
+            </p>
+            <pre class="language-bash"><code>
+ember generate resource note
+            </code></pre>
+            <p>
+                This generate command tells Ember CLI that we want to represent an object in our application called “note”. The CLI makes our lives easier by creating and
+                placing all of the files we need in order to do this, and in the proper locations. If you navigate to the app/models folder, you’ll see a note.js file has
+                been generated. Opening the file, you’ll see that all it does is import Ember Data and export a subclass of the Model class. Let’s add the properties of
+                the note object we want to store. Add the following to your note.js.
+            </p>
+            <pre><code>
+import DS from 'ember-data';
+export default DS.Model.extend({
+    title: DS.attr('string'),
+    body: DS.attr('string'),
+    created: DS.attr('date', {
+        defaultValue() { return new Date(); }
+    }),
+    keywords: DS.attr('string')
+});
+            </code></pre>
+            <p>
+                As you can see, the code is fairly self-explanatory. we provide the properties as with any other JS object, but we set them to the result of
+                callingDS.attr(), specifying the type we’re dealing with. The keywords property is an array, so we don’t specify a type. The only property that’s a little
+                different is the created date. We’re passing in an object as the second parameter to the attr function so that we can tell it to return a new Date instance
+                as the default value. This could be done with any of the peroperties, if we wanted to, but we actually need it here to ensure a new note always has the
+                current date attached to the created property.
+            </p>
+            <p>
+                Now that the model is done, we can turn our attention to the second file added by the generator: app/routes/note.js. Routes in Ember are objects that tell
+                the app what to do when a specific area of the app is triggered. We can utilize it here to return some data we can use for testing that this thing is
+                actually working. Add the following code.
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+    model() {
+        return { title: "Hello world" };
+    }
+});
+            </code></pre>
+            <p>
+                The last file created with the generate command is the view, or Handlebars template for a note in our app, which exists under app/templates/note.js. Let’s
+                see if we can see the data from our test note being returned in the route. Remove the {{outlet}} from the file and replace it with {{model.title}}.
+            </p>
+            <pre><code>
+{{model.title}}
+            </code></pre>
+            <p>
+                The last piece required is a change to the app’s app/router.js. This file tells the application to direct requests to certain paths to corresponding routes in
+                our routes directory. We’re going to tell ember we want the root of the application to invoke the note route we just setup.
+            </p>
+            <pre><code>
+import Ember from 'ember';
+import config from'./config/environment';
+
+var Router = Ember.Router.extend({
+    location: config.locationType
+});
+
+Router.map(function() {
+    this.route('note', { path: '/' });
+});
+
+export default Router;
+            </code></pre>
+            <p>
+                Now if you flip back to your browser, you can see the changes have taken effect, and the page should now look like this.
+            </p>
+            <div class="screencap">
+                <img class="img-responsive" src="images/note-test-view.png" alt="Testing our route"/>
+            </div>
+            <p>
+                Wait, we didn’t hit refresh, did we? Well, we didn’t have to. Thanks to the ember serve command we used earlier, ember has been watching our app’s files
+                for changes, and refreshing the screen when needed. Cool, right? There are, of course, some occasions where you will need to restart the server by using
+                Ctrl+C to stop it, then starting it again with the ember serve command.
+            </p>
+
+            <div id="BootstrapIt" class="page-header">
+                <h3>Bootstrap It</h3>
+            </div>
+            <p>
+                We can see data on the screen, but the styling is non-existent, so it looks like crap. Let’s incorporate Bootstrap and create an application style and layout that isn’t
+                very difficult to implement.
+            </p>
+            <p>
+                Start by running the following command from the notesApp folder.
+            </p>
+            <pre class="language-bash"><code>
+bower install bootstrap –-save-dev
+            </code></pre>
+            <p>
+                While we’re at it, let’s add the moment library too, because we know we’re going to need it:
+            </p>
+            <pre class="language-bash"><code>
+bower install moment –-save-dev
+            </code></pre>
+            <p>
+                Once these have been installed, we have to tell Ember where to find them so that they can be included as a part of the content required by the app. We do
+                this by adding app.import() calls to the ember-cli-build.js under the notesApp directory.
+            </p>
+            <pre><code>
+/* global require, module */
+var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+module.exports = function(defaults) {
+  var app = new EmberApp(defaults, {
+    // Add options here
+  });
+
+  // Use `app.import` to add additional libraries to the generated
+  // output files.
+  //
+  // If you need to use different assets in different
+  // environments, specify an object as the first parameter. That
+  // object's keys should be the environment name and the values
+  // should be the asset to use in that environment.
+  //
+  // If the library that you are including contains AMD or ES6
+  // modules that you would like to import into your application
+  // please specify an object with the list of modules as keys
+  // along with the exports of each module as its value.
+  app.import(app.bowerDirectory + '/bootstrap/dist/css/bootstrap.min.css');
+  app.import(app.bowerDirectory + '/moment/min/moment.min.js');
+
+  return app.toTree();
+};
+            </code></pre>
+            <p>
+                Now you will need to restart your server in order to see if everything works again as expected.
+            </p>
+            <p>
+                Let’s switch the typical CSS out for SASS, so we can avoid repeating ourselves too much in the styling. This is really easy with Ember, as all we need to
+                do is run the following command from the notesApp directory:
+            </p>
+            <pre class="language-bash"><code>
+npm install ember-cli-sass -–save-dev
+            </code></pre>
+            <p>
+                Then, just rename the app.css file in notesApp/styles to app.scss. That’s it, now we can use SASS in place of CSS and Ember will handle the rest of the
+                work for us. You should probably restart your ember serve command at this point as well. Anytime you add a new Node module, it’s a safe bet a restart will
+                be required.
+            </p>
+            <p>
+                Now we need to utilize the new Bootstrap styling to make our app look a little better. Open the app/templates/application.hbs file and change it to use a
+                new layout.
+            </p>
+            <pre class="language-markup"><code>
+&lt;nav class=&quot;navbar navbar-default navbar-fixed-top&quot;&gt;
+&lt;div class=&quot;container-fluid&quot;&gt;
+    &lt;div class=&quot;navbar-header&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;navbar-toggle collapsed&quot; 
+                data-toggle=&quot;collapsed&quot; data-target=&quot;#bs-example-navbar-collapse-1&quot;&gt;
+            &lt;span class=&quot;sr-only&quot;&gt;Toggle Navigation&lt;/span&gt;
+            &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+            &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+            &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+        &lt;/button&gt;
+        &lt;a class=&quot;navbar-brand&quot; href=&quot;#&quot;&gt;Notes&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;/nav&gt;
+&lt;div class=&quot;container&quot;&gt;
+{{outlet}}
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                If all goes well, you should see something in your browser that looks like this:
+            </p>
+            <div class="screencap">
+                <img class="img-responsive" src="images/index-after-adding-bootstrap.png"/>
+            </div>
+            <p>
+                Throw the following style into your app.scss under app/styles to make sure our page content has some room and any navigation items added in the future show
+                as highlighted.
+            </p>
+            <pre class="language-css"><code>
+body {
+    padding-top: 75px;
+}
+
+nav .active {
+    font-weight: bold;
+}
+            </code></pre>
+
+            <div class="page-header">
+                <h3 id="ShowingList">Showing a List</h3>
+            </div>
+            <p>
+                Now that we’ve seen the basics and the app has some styling, we need the root of our application to always show all of the current notes when the user
+                visits the site. In order to do this, we will need the important parts of a successful navigation in Ember: the Route, Model and View.
+            </p>
+            <p>
+                Start by changing the router.js to take us to a route for “notes” when the root path is requested.
+            </p>
+            <pre><code>
+import Ember from 'ember';
+import config from './config/environment';
+
+var Router = Ember.Router.extend({
+   location: config.locationType 
+});
+
+Router.map(function() {
+   this.route('notes', { path: '/' });
+});
+
+export default Router;
+            </code></pre>
+            <p>
+                Since we’re telling the root path to use the “notes” route, we need to create it. Add a new file called notes.js to the app/routes folder, 
+                or use the following CLI command:
+            </p>
+            <pre class="language-bash"><code>
+ ember generate route notes
+            </code></pre>
+            <p>
+                 The content of this file should look like this for now:
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+   model: function() {
+        return this.store.find('note');
+   } 
+});
+            </code></pre>
+            <p>
+                This begs a good question: why run the command from the CLI if all you have to do is add one file? Well, the CLI does more than that. If you run the
+                generate route command for this case, you’ll see that not only did it create the one file, it also created a template that matched it for your view, as
+                well as a unit test file for the notes route. It also would have added it to the router.js, but it skips that here because it can see we’ve already added
+                it.
+            </p>
+            <p>
+                Wondering what the this.store.find() thing is all about? Well, this is another awesome feature to dig into. Ember has the concept of adapters, which are
+                really objects that your code can use to work with a given data source. We will be using a REST adapter, which is designed to communicate via AJAX calls to
+                the backend API for your application. Let’s go ahead and get our adapter setup now.
+            </p>
+            
+            <div class="page-header">
+                <h3 id="SettingUpAdapter">Setting up an Adapter</h3>
+            </div>
+            <p>
+                Run the generate command to create your adapter file:
+            </p>
+            <pre class="language-bash"><code>
+ember generate adapter application
+            </code></pre>
+            <p>
+                This creates the file app/adaters/application.js, which tells our app how to communicate with our REST service. The details of what’s in this file are a
+                little deep to get into here, but suffice to say it’s making our app communicate effectively with our REST endpoint. Make sure yours looks like this.
+            </p>
+            <pre><code>
+import DS from 'ember-data';
+
+export default DS.RESTAdapter.reopen({
+    host: 'http://localhost:8080',
+    namespace: 'api',
+    ajax: function(url, method, hash) {
+        hash = hash || {}; // hash may be undefined
+        hash.crossDomain = true;
+        return this._super(url, method, hash);
+    },
+    deleteRecord: function() {
+        var response = this._super.apply(this, arguments);
+        return response.then(function(/*response*/) {
+            // This is a workaround for an ember RESTAdapter delete call issue
+            return null;
+        });
+    }
+});
+            </code></pre>
+            <p>
+                The cool thing about Ember’s adapters is that there are a bunch of them that you can use right out of the box. There’s one for storing your data in memory
+                (gone when the page is refreshed), local storage, various types of database servers, etc. 
+                Check out the <a href="https://guides.emberjs.com/v1.10.0/models/customizing-adapters/">adapter specifics</a> to learn more.
+            </p>
+
+            <div class="page-header">
+                <h3 id="BackToList">Back to The List</h3>
+            </div>
+            <p>
+                Now that we have an adapter, let’s finish this notes list. Add the following to your app/templates/notes.hbs.
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class=&quot;container-fluid&quot;&gt;
+    &lt;div class=&quot;row&quot;&gt;
+        {{#each model as |note|}}
+            &lt;div class=&quot;col-sm-4&quot;&gt;
+                &lt;div class=&quot;noteBlock pane panel-default&quot;&gt;
+                    &lt;div class=&quot;panel-heading&quot;&gt;
+                        &lt;h3 class=&quot;panel-titleblockLinkTitle stop-overflow&quot;&gt;
+                            {{note.title}}
+                            &lt;span&gt;
+                                &lt;small class=&quot;muted blockLink&quot;&gt;
+                                    {{note.created}}
+                                &lt;/small&gt;
+                            &lt;/span&gt;
+                        &lt;/h3&gt;
+                    &lt;/div&gt;
+                    &lt;div class=&quot;panel-body force-wordwrap&quot;&gt;
+                        {{note.body}}
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        {{/each}}
+    &lt;/div&gt;
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                As you can see, we’re using handlebars syntax (the “{{“ and “}}”) to insert data from our notes into the rendered markup. Using the #each helper allows us
+                to write the markup for each of the notes in our model. Let’s add the remaining styling to our app/styles/app.scss now so it’s all ready to go.
+            </p>
+            <pre class="language-css"><code>
+body {
+    padding-top: 75px;
+}
+
+nav .active {
+    font-weight: bold;
+}
+
+.noteBlock {
+    cursor: pointer;
+}
+
+.blockLink {
+    text-decoration: none !important;
+}
+
+.blockLinkTitle {
+    a:hover {
+        text-decoration: underline;
+    }
+}
+
+.body {
+    margin-top: 15px;
+    font-size: 1.2em;
+}
+
+.addButtonDiv {
+    margin-bottom: 20px;
+}
+
+.save {
+    margin-top: 10px;
+}
+
+.note-text {
+    margin-top: 20px;
+}
+
+.note-title {
+    margin-top: 15px;
+}
+
+.label-as-badge {
+    border-radius: 1em;
+    margin-right: 5px;
+}
+
+.keyword-filter {
+    width: 25%;
+    float:left;
+    margin-right: 15px;
+}
+
+.force-wordwrap {
+  word-wrap: break-word;
+}
+
+.stop-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+            </code></pre>
+            <p>
+                Now if you look at the browser again, you see a scattering of panels each holding information about a note that exists in the REST service’s data store.
+                Ember needed just the application adapter we created and the this.store.find(‘note’) call in the notes route in order to bring the data back from the
+                server. Ember is smart enough to be able to figure out how it should structure request URL’s so that it can accomplish the various things we ask it to do
+                using the store object in our routes. For instance, because we said store.find(‘note’), it assumed we wanted to execute an HTTP GET to the host in our
+                application adapter, appending ‘/notes’ to the URL, which is exactly where the web API was watching for calls to send back all the notes in the data store.
+                Pretty slick, huh?
+            </p>
+            <p>
+                Your browser should now look like this, which has some issues we need to address next:
+            </p>
+            <div class="screencap">
+                <img class="img-responsive" src="images/notes-list-rendered-for-the-first-time.png" alt="Our first rendering of the notes list."/>
+            </div>
+
+            <div class="page-header">
+                <h3 id="FirstHelper">Building your First Helper</h3>
+            </div>
+            <p>
+                The worst thing here is the JavaScript date format we’re seeing on the notes. Let’s clean that up using the best tool for the job: moment.js. We added that
+                dependency through bower back at the beginning of this tutorial, so it’s ready to be used by our code. In Ember, creating a block of code that helps us
+                display something more effectively in the view is a job typically performed by an Ember object called a helper. 
+                We will create a helper file in the app/helpers folder named “from-now-date.js”, which should include the following code:
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Handlebars.makeBoundHelper(function(date) {
+    return moment(date).fromNow();
+});
+            </code></pre>
+            <p>
+                We’re utilizing moment here to get an easy-to-read version of when the note was created. 
+                To make use of this new helper, add the from-now-date call into
+                your notes.hbs template right before the note.created date reference, as below:
+            </p>
+            <pre class="language-markup"><code>
+&lt;small class="muted blockLink"&gt;
+    {{from-now-date note.created}}
+&lt;/small&gt;
+            </code></pre>
+            <p>
+                Another issue we will encounter is ensuring that the entire content of a long note isn’t rendered into this “card” view, as there’s just not enough room.
+                We really want to just show a preview of the note, so let’s add a helper that can ensure we only grab a portion of the note’s body. Add the file
+                “format-note-preview.js” to your helpers folder right next to the helper we just created. We’ll add some code to this file to limit the amount of text
+                rendered from the body of the note to 50 characters or less using the following:
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Handlebars.makeBoundHelper(function(note) {
+    return note.length > 50 ? note.substring(0, 50) + '...' : note;
+});
+            </code></pre>
+            <p>
+                We will use this helper where we render out the note.body property in our notes.hbs file:
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class="panel-body"&gt;
+    {{format-note-preview note.body}}
+&lt;/div&gt;
+            </code></pre>
+
+            <div class="page-header">
+                <h3 id="Linking">Linking in Ember</h3>
+            </div>
+            <p>
+                Now that we can see our notes, we need a way to select one and view its details. This is where routing and routes come back into play, as we’re moving from
+                one view to another within our SPA (Single Page App). Let’s start by creating the anchor tags in our view that will navigate to the details for a given
+                task, using the link-to helper provided for us by Ember. This helper should wrap the div in our notes.hbs that has the class “noteBlock”:
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class=&quot;col-sm-4&quot;&gt;
+    {{#link-to 'note' note.id classNames=&quot;blockLink&quot;}}
+    &lt;div class=&quot;noteBlock panel panel-default&quot;&gt;
+        &lt;div class=&quot;panel-heading&quot;&gt;
+            &lt;h3 class=&quot;panel-title blockLinkTitle&quot;&gt;
+                {{note.title}}
+                &lt;span&gt;
+                    &lt;small class=&quot;muted blockLink&quot;&gt;
+                    {{from-now-date note.created}}
+                    &lt;/small&gt;
+                &lt;/span&gt;
+            &lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;panel-body&quot;&gt;
+            {{format-note-preview note.body}}
+        &lt;/div&gt;
+    &lt;/div&gt;
+    {{/link-to}}
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                If you flip back over to your browser, you can see that the site is just plain broken. What happened here? 
+                Open your browser’s dev tools (usually F12 on Windows), where you can see plainly what caused this problem:
+            </p>
+            <div class="screencap">
+                <img class="img-responsive" src="images/error-no-route-named-note.png" alt="Error - 'note' route not found."/>
+            </div>
+            <p>
+                Because the link-to helper is relying on the Ember resolver to locate where the anchor’s href tag 
+                should be pointing, it has to know where to find the route itself, which it does by resolving 
+                the name for the route that we provided in our link-to call. We haven’t created this route yet, 
+                so Ember kindly provides an explanation so that we can correct the issue. Let’s fix it by 
+                adding the route to our router.js in the Router.map() invocation:
+            </p>
+            <pre><code>
+Router.map(function() {
+   this.route('notes', { path: '/' });
+   this.resource('note', { path: '/note/:note_id' });
+            </code></pre>
+            <p>
+                And here, by modifying our route logic in app/routes/note.js to the following:
+            </p>
+            <pre><code>
+export default Ember.Route.extend({
+    model: function(params) {
+        return this.store.find('note', params.note_id);
+    } 
+});
+            </code></pre>
+            <p>
+                Now our notes should render correctly, and they now have anchors wrapped around them. 
+                Click on the first one to see what happens.
+            </p>
+            <p>
+                We see our note template rendered, but we’re only showing the title currently. 
+                Let’s update that by changing the app/templates/note.hbs to look like this:
+            </p>
+            <pre class="language-markup"><code>
+&lt;h1&gt;
+    {{model.title}}
+    &lt;button {{action &quot;removeNote&quot;}} class=&quot;destroy btn btn-danger&quot;&gt;Delete&lt;/button&gt;
+&lt;/h1&gt;
+
+&lt;h5&gt;Written {{long-format-date model.created}}&lt;/h5&gt;
+
+&lt;div class=&quot;body&quot;&gt;
+    &lt;pre&gt;{{model.body}}&lt;/pre&gt;
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                You’ll notice we’re referencing a new helper function for our date here. 
+                This one is created by adding long-format-date.js to the app/helpers directory
+                with the following logic:
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Handlebars.makeBoundHelper(function(date) {
+    return moment(date).format('MMMM Do YYYY, h:mm a');
+});
+            </code></pre>
+            <p>
+                This new helper just uses moment to give us a cleaner creation date.
+            </p>
+            <p>
+                Now if you look at the note page, you can see all the details about this note. 
+                Notice that the address of this page now points to the URL "note/1", where the 1 represents
+                the id of the note we’re looking at. Did you notice where that came from? 
+                When we added this route to the router.js, we added the “:note_id” parameter to
+                the end. Ember recognizes that this will be a value passed in as part of the URL, 
+                and makes it available to our note route code as a property of the params argument to the model function. 
+                All you have to do is reference the params.note_id property to read out that value and use it in your route.
+                This is another example of the "convention over configuration" approach taken in Ember making your job easier, 
+                so you can focus less on plumbing and more on functionality.
+            </p>
+
+            <div class="page-header">
+                <h3 id="Deleting">Deleting a Note</h3>
+            </div>
+            <p>
+                You’ll notice that we previously added a Delete button to the note details page. 
+                Let's get that wired up so we can remove notes we no longer want stored on the server. 
+                The note.hbs file shows that the delete button has an “action” property with a value of “removeNote” 
+                assigned to the element in Handlebars syntax. The only thing we have to do to get the click event of this
+                button to trigger the execution of code is to add the right action handler to the right controller.
+                Since we're dealing with the note details page which is provided by the note route, the Note Controller 
+                is where Ember will look for the action event handler. You <i>could</i> just create a note.js file under 
+                the app/controllers directory, but let's keep using the CLI because it helps us ensure proper file placement
+                and naming. Execute the following CLI command from the notesApp directory. We can shorten our command a bit
+                as well, using the alis g for the generate command name.
+            </p>
+            <pre class="language-bash"><code>
+ember g controller note
+            </code></pre>
+            <p>
+                When the command finishes generating our note.js controller under the app/controllers directory, modify it 
+                to implement our removeNote action being triggered by the delete button. 
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+    actions: {
+        removeNote: function() {
+            let self = this;
+            let note = self.get('model');
+            note.destroyRecord().then(function() {
+                self.transitionToRoute('notes');
+            });
+        }
+    }
+});
+            </code></pre>
+            <div class="informational well">
+                <h3>Just informational, don't actually write this code...</h3>
+                <p>
+                    This code demonstrates how events can be handled in Ember using the "actions" hash of a controller.
+                    In Ember, the best way to handle events from the UI is to do what we've done here with the Delete button.
+                    The element has an actions value specified in the view, and a function of the same name is implemented
+                    in the controller's actions hash. Ember knows where to find the action because of this simple naming
+                    convention, so we don't have to specify anything else to get the template communicating with the controller.
+                    Ember allows us to specify the name of the event we want to watch for, but we didn't require it in this case
+                    because 'click' is considered the default event for a button element. If we wanted to watch for another event, 
+                    such as 'mouseover', we would have to provide that as an argument to the action helper in the template, like so:
+                </p>
+                <pre class="language-markup"><code>
+&lt;button {{action &quot;removeNote&quot; note on=&quot;mouseover&quot;}} class=&quot;destroy btn btn-danger&quot;&gt;Delete&lt;/button&gt;
+                </code></pre>
+                <p>
+                    Another example of the versatility of this built-in helper is the ability to pass arguments from the template 
+                    directly to the action function on the controller. You aren't limited to passing simple primitive values either;
+                    you can pass entire objects from the template to the action. In the code below, for example, we're passing a 
+                    note by providing the instance from the template. All we would have to do on the controller side is add
+                    an argument to the function so that we could access the note's data. Conventions for the win! 
+                </p>
+                <pre class="language-markup"><code>
+&lt;button {{action &quot;removeNote&quot; note}} class=&quot;destroy btn btn-danger&quot;&gt;Delete&lt;/button&gt;
+                </code></pre>
+                <p>
+                    One thing to be careful of in this helper is surrounding the correct arguments with quotes. Anything that
+                    is being passed as an explicit value must be surrounded by quotes, including the name of the action being targeted.
+                    However, any value being passed as a variable cannot be quoted at all. You can see this in the code block above,
+                    where we wrap the name of the action we're targeting as well as the name of the event we want to watch for with
+                    quotes, but the note that we're passing in isn't quoted because we're pointing to the variable in the template
+                    that holds the data we want to provide. The text "action" isn't going to be quoted simply because it's the name
+                    of the helper we're calling, and helpers do not have to be surrounded by quotes. 
+                </p>
+            </div>
+            <p>
+                The logic in the “removeNote” action is straightforward; it grabs the note from the controller using the 
+                Ember standard get function, calls the destroyRecord() function on the note itself, and directs the user 
+                back to the notes view once the removal completes. The destroyRecord() function is part of the Ember
+                adapter API, and it tells the adapter that it should generate a delete request to the host that points to 
+                the note we’ve removing. The generated call to our Web API in this case looks like:
+            </p>
+            <pre class="language-http"><code>
+DELETE notes/1
+            </code></pre>
+            <p>
+                Click the delete button once your browser has refreshed itself to see how this looks from the app.
+            </p>
+
+            <div class="page-header">
+                <h3 id="CreateNewNote">Creating a New Note</h3>
+            </div>
+            <p>
+                Now we can view and delete notes, but once you've gone totally click-happy with the delete button,
+                you're going to need to create new notes to refill your list. So, the next piece of functionality 
+                we'll add is creating new notes to persist to the data store.
+            </p>
+            <p>
+                We could do this by manually adding all of these files, or we can take advantage of the 
+                Ember CLI generator commands. Let’s use the one below to do the boring work for us.
+            </p>
+            <pre class="language-bash"><code>
+ember generate route new
+            </code></pre>
+            <p>
+                You should see output telling you that the route was created under the routes folder, and the router.js 
+                was updated automatically. Take a look at the files it says is modified/created to see what the 
+                generator did for us. The CLI has the ability to nearly eliminate the chance of putting a file in the wrong
+                place or naming it incorrectly, making it very unlikely that you'll ever have to sit there scratching your 
+                head about why things just aren't working right after you added that last controller file. That type of
+                problem has the potential to be rather frustrating to track down, so it's great that we can rely on these
+                generator commands to ease the burden a bit, especially with an app that relies so heavily on accurate 
+                naming conventions.
+            </p>
+            <p>
+                Now that the files and route are there, we need a way to actually navigate to the new view in our app. 
+                Modify the code in templates/notes.hbs by adding the following at the very top of the file above 
+                all of the other markup:
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class=&quot;container addButtonDiv&quot;&gt;
+    {{#link-to &quot;new&quot; class=&quot;btn btn-primary btn-sm&quot;}}Add Note{{/link-to}}
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                Note that any text that comes in between the opening and closing "link-to" helper blocks will be used as the link text.
+                Looking at your notes page now, you’ll see an Add Note button at the top. Click it to navigate to our new route. 
+                Cool, but it’s empty. Replace the contents of the templates/new.hbs file with the following code:
+            </p>
+            <pre class="language-markup"><code>
+&lt;h3&gt;Create a new note&lt;/h3&gt;
+
+&lt;div class=&quot;input-group note-title&quot;&gt;
+    &lt;label for=&quot;title&quot;&gt;Title&lt;/label&gt;
+    &lt;br/&gt;
+    {{input type=&quot;text&quot;
+            id=&quot;title&quot;
+            value=model.note.title
+            class=&quot;form-control&quot;
+            placeholder=&quot;Title&quot;
+    }}
+&lt;/div&gt;
+
+&lt;div class=&quot;input-group note-text&quot;&gt;
+    &lt;label for=&quot;note&quot;&gt;Note&lt;/label&gt;
+    &lt;br/&gt;
+    {{textarea class=&quot;form-control&quot; 
+               cols=&quot;50&quot;
+               rows=&quot;10&quot;
+               id=&quot;note&quot;
+               value=model.note.body
+               placeholder=&quot;Enter your note here...&quot;
+    }}
+&lt;/div&gt;
+
+&lt;div class=&quot;input-group&quot;&gt;
+    &lt;label class=&quot;keyword-input&quot; for=&quot;keywords&quot;&gt;Keywords&lt;/label&gt;
+    &lt;br/&gt;
+    {{input type=&quot;text&quot;
+            id=&quot;keywords&quot;
+            class=&quot;form-control&quot;
+            value=model.keywords
+            placeholder=&quot;Enter keywords&quot;
+    }}
+&lt;/div&gt;
+
+&lt;div class=&quot;input-group&quot;&gt;
+    &lt;input type=&quot;button&quot; {{action &quot;createNote&quot;}} 
+           class=&quot;save btn btn-primary form-control&quot;
+           value=&quot;Save&quot;/&gt;
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                This page allows us to specify a title, body and keywords for our new note. 
+                The interesting parts here are the new handlebars helpers for the inputs. 
+                All these helpers do is allow us to specify what property of our underlying model the 
+                element should be bound to, as well as giving us the opportunity to set some other 
+                important attributes for the element (such as placeholder text, class, etc.) 
+                If you look at the markup for the Save button, you can see that it’s referencing 
+                an action called “createNote”. This means we need a “createNote” function in the 
+                “actions” property of our controller. We haven’t created that yet, so let's generate it 
+                now by running this from the notesApp directory:
+            </p>
+            <pre class="language-bash"><code>
+ember g controller new
+            </code></pre>
+            <p>
+                Let’s replace the contents of the newly generated route (at app/routes/new.js) with the code below. 
+                This will tell the controller to grab a new, empty note from the store when we navigate to the new page.
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+    model: function() {
+        return Ember.RSVP.hash({
+            note: this.store.createRecord('note');
+        });
+    }    
+});
+            </code></pre>
+            <p>
+                The code above is utilizing the RSVP class in Ember to create a hash from an object with one property: note.
+                The note property is being populated from our store, by calling the createRecord function with the name of
+                the model as the sole argument. Remember that our store is just the abstraction we use in Ember to access data
+                using the adapter instance we have setup in our project. In this case, the store is the Web API we're pulling the
+                data from.
+            </p>
+            <p>
+                Now that the file new.js exists under app/controllers, we can replace its contents with the following, completing our createNote action logic:
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+    actions: {
+        createNote: function() {
+            let self = this;
+            let note = self.get('model.note');
+            note.save().then(function() {
+                self.transitionToRoute('notes');
+            });
+        }
+    } 
+});
+            </code></pre>
+            <p>
+                The code above grabs all of the data bound values from the new note page, retrieving all of the 
+                input specified, then calls the save() function on the note. Once the save completes, the page is
+                transitioned back to the notes page. One thing to note here: when you pull model data from an Ember 
+                model, you have to use the get() function, passing in the property name as a string. Likewise, 
+                when you set a property of an Ember model, you have to use the set() function, passing in the 
+                property name as the first argument and the value to set it to as the second argument.
+            </p>
+
+            <div class="page-header">
+                <h3 id="SortAndFilter">Sorting and Filtering</h3>
+            </div>
+            <p>
+                Hey, what the what? That newly created note came up at the top of the list but when I refreshed 
+                the page manually, it moved all the way to the bottom. Now my latest notes are at the bottom 
+                of the list. It doesn't seem that we're applying any logic to how our notes are displayed here. 
+                This seems wrong, so let’s fix it.
+            </p>
+            <p>
+                We’re currently taking the data we get back from the server and just iterating through it in 
+                whatever order we get it back to render it to the list. We need to add a sorting function. 
+                Thankfully, this is fairly easy in Ember. Since this is a middle-man type of job 
+                (remember that controllers are good go-betweens for the view and the persisted data), 
+                we’ll add some logic to the notes.js controller under app/controllers.
+            </p>
+            <pre><code>
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+    filter: null,
+    filteredNotes: Ember.computed('model.@each', function() {
+        return this.get('model').sortBy('created').reverse();
+    })    
+});
+            </code></pre>
+            <p>
+                We’ve added not only a filter property (which so far does absolutely nothing, don't worry...we'll get there), 
+                but we’ve also created this filteredNotes property that takes all of the notes in the controller’s 
+                model and orders them by created date in descending order. That’s really all it takes as far 
+                as the logic goes. Let’s apply these changes to the notes.hbs template.
+            </p>
+            <p>
+                Add this to the top of the template, next to the add button markup:
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class=&quot;container addButtonDiv&quot;&gt;
+    {{input type=&quot;text&quot; placeholder=&quot;Keyword Filter&quot; value=filter}}
+    {{#link-to 'new' class=&quot;btn btn-primary btn-sm&quot;}}Add Note{{/link-to}}
+&lt;/div&gt;
+            </code></pre>
+            <p>
+                ...and update the each binding to use our new filteredNotes property on the controller:
+            </p>
+            <pre><code>
+&lt;div class=&quot;row&quot;&gt;
+    {{#each filteredNotes as |note|}}
+    &lt;div class=&quot;col-sm-4&quot;&gt;
+            </code></pre>
+            <p>
+                The filteredNotes property we added to the controller is created using the Ember.computed function, 
+                which takes a string pointing to the model’s property that we’re binding to, and a function that 
+                returns the actual data. The ‘@’ symbol in the first argument is a shortcut telling Ember we’re 
+                applying this for each item in the collection. Ember’s computed function is used to tell Ember 
+                we want to watch the property in question, and update the rendered output when something changes. 
+                Let’s see how our changes have impacted the notes page by refreshing now.
+            </p>
+            <p>
+                Hey, it’s all in the right order! Try filtering by keyword by typing something into the filter box. 
+                Doesn’t work, does it? We added the filter property and the computed that updates our rendered 
+                output based on changes to the collection, but we haven’t told the computed to update when the “filter” property
+                changes as well. All we have to do to make that work is add the property name as an argument 
+                to the computed function.
+            </p>
+            <pre><code>
+filteredNotes: Ember.computed('model.@each', 'filter', function() {
+            </code></pre>
+            <p>
+                Then add some logic to exclude non-matches with the filter property’s current value.
+            </p>
+            <pre><code>
+filteredNotes: Ember.computed('model.@each', 'filter', function() {
+    let filter = this.get('filter');
+    return this.get('model').filter(note => {
+        let keys = note.get('keywords');
+        return !filter || 
+            (keys &amp;&amp; keys.toLowerCase().indexOf(filter.toLowerCase()) !=== -1);
+    }).sortBy('created').reverse();    
+});
+            </code></pre>
+            <p>
+                That’s cool, now when we start to type a keyword into the filter textbox, only the matching notes will be visible. 
+                The only issue here is that if there aren’t any matches, the screen is just empty. Let’s add a message to 
+                inform the user that there aren’t any notes to display. Add the following to the notes.hbs template 
+                right before the each call.
+            </p>
+            <pre class="language-markup"><code>
+&lt;div class=&quot;row&quot;&gt;
+    {{#unless filteredNotes}}
+        &lt;h3&gt;No notes found.&lt;/h3&gt;
+    {{/unless}}
+    {{#each filteredNotes as |note|}}
+    ...
+            </code></pre>
+            <p>
+                Since we’re incorporating this keyword stuff, we might as well show the keywords on the note details screen. 
+                Click one of the cards on the notes page so we can see how it looks while we’re working on it.
+            </p>
+            <p>
+                Let’s add the following code to the bottom of the note.hbs file under app/templates:
+            </p>
+            <pre class="language-markup"><code>
+{{#each filteredKeywords as |keyword|}}
+    &lt;span class=&quot;label label-primary label-as-badge&quot;&gt;
+        {{keyword}}
+    &lt;/span&gt;
+{{/each}}
+            </code></pre>
+            <p>
+                This will render a custom span for each of the keywords we have stored in the filteredKeywords 
+                property of the model. Since this is view logic, this property will be setup on the note.js 
+                controller under app/controllers as so:
+            </p>
+            <pre><code>
+filteredKeywords: Ember.computed('model.@each', function() {
+    let keys = this.get('model.keywords');
+    return (keys ? keys.split(' ') : []);
+})
+            </code></pre>
+            <p>
+                When the page refreshes you’ll see each of the keywords assigned to that note below the body.
+            </p>
+
+            <div class="page-header">
+                <h3 id="NextSteps">Next Steps</h3>
+            </div>
+            <p>
+                That’s it for this tutorial. Consider this app a solid playground for learning more about
+                Ember and the interesting ways it utilizes conventions to make our jobs as developers easier.
+                The following are some features you could add to the Notes App that will allow you to gain
+                further experience working in Ember. Remember to create branches for each of these "experiments"
+                so that you can have different versions of the app in the same repository, and can switch back
+                and forth easily.
+                <ul>
+                    <li>Do some 
+                        <a href="https://guides.emberjs.com/v1.10.0/testing/unit-testing-basics/">unit testing</a>
+                    </li>
+                    <li>Setup notes to be editable directly from the details view</li>
+                    <li>Add 
+                        <a href="https://ember-simple-auth.com/">authentication and authorization</a>
+                    </li>
+                    <li>Change notes to appointments with a calendar view</li>
+                    <li>Rather than using the backend service, 
+                        <a href="https://guides.emberjs.com/v1.10.0/models/customizing-adapters/">try new adapters</a>
+                         such as the LocalStorageAdapter
+                    </li>
+                    <li>Integrate drag &amp; drop from the list view to move between keywords/categories/deleted/etc.</li>
+                    <li>Add categories for the notes, and use them to sort/filter on the list view</li>
+                    <li>Start a new project that stores movies with their various attributes and thumbnails, like IMDB</li>
+                    <li>Build the app 
+                        <a href="http://ember-cli.com/user-guide/#deployments">using the Ember CLI and deploy</a> 
+                        to a free hosting service, like 
+                        <a href="http://www.heroku.com">Heroku</a>
+                    </li>
+                </ul>
+            </p>
+            <p>
+                I hope you’ve learned something about what the development experience is like when building an app in Ember and using the
+                Ember CLI. The following are the absolute best sources of information about Ember that you’ll find anywhere on the internet, so go check out some of the
+                other awesome things Ember is capable of.
+            </p>
+            <p>
+                Ember JS: <a href="http://emberjs.com/">http://emberjs.com/</a>
+            </p>
+            <p>
+                Please note: the most useful portion of the Ember JS site is the Guides section, which you can access through the “Guides” menu link at the top of the
+                page. Anything you could ever want to know is in there!
+            </p>
+            <p>
+                Ember CLI: <a href="http://www.ember-cli.com/">http://www.ember-cli.com/</a>
+            </p>
+        </div>
+
+        <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+        <script src="node_modules/clipboard/dist/clipboard.min.js"></script>
+
+        <script src="node_modules/prismjs/prism.js"></script>
+
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        
+        <script src="app.js"></script>
+    </body>
+</html>
