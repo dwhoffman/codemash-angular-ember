@@ -851,7 +851,7 @@ ember generate route new
     {{input type=&quot;text&quot;
             id=&quot;keywords&quot;
             class=&quot;form-control&quot;
-            value=model.keywords
+            value=model.note.keywords
             placeholder=&quot;Enter keywords&quot;
     }}
 &lt;/div&gt;
@@ -1001,7 +1001,7 @@ filteredNotes: Ember.computed('model.@each', 'filter', function() {
     return this.get('model').filter(note => {
         let keys = note.get('keywords');
         return !filter || 
-            (keys &amp;&amp; keys.toLowerCase().indexOf(filter.toLowerCase()) !=== -1);
+            (keys &amp;&amp; keys.toLowerCase().indexOf(filter.toLowerCase()) !== -1);
     }).sortBy('created').reverse();    
 });
             </code></pre>
