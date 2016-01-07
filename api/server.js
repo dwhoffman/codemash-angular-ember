@@ -127,6 +127,22 @@ function createNote(maxId, note) {
   return newNote;
 }
 
+// UPDATE
+server.put('/api/notes/:id', function(req, res, next) {
+	console.log(req.params.note.id + ', ' + req.params.note.title + ', ' + req.params.note.body + ', ' + req.params.note.created);
+	req.db.run("UPDATE Notes SET title = $title, body = $body, created = $created, keywords = $keywords WHERE id = $id", {
+		$id: req.params.note.id,
+		$title: req.params.note.title,
+		$body: req.params.note.body,
+		$created: req.params.note.created,
+		$keywords: req.params.note.keywords
+	}, function() {
+		res.json({'note': req.params.note});
+	});
+
+	next();
+});
+
 // DELETE
 server.del('/api/notes/:id', function(req, res, next) {
 	req.db.run("DELETE FROM Notes WHERE id = ?", parseInt(req.params.id, 10), function(err) {
